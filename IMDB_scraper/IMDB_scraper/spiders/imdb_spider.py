@@ -27,11 +27,10 @@ class ImdbSpider(scrapy.Spider):
             yield Request(url, callback = self.parse_actor_page)
 
     def parse_actor_page(self, response):
-        film_box = response.css("div.filmo-category-section")
-        film_rows = film_box.css("div.filmo-row")
+        film_rows = response.css("div.filmo-row")
         credits = []
         for row in film_rows:
-            film_name = row.css("::attr(id)").css("b").css("a::text")
+            film_name = row.css("::attr(id)").css("a::text")
             credits.append(film_name)
         yield credits
 
