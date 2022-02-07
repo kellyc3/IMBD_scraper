@@ -14,9 +14,9 @@ class ImdbSpider(scrapy.Spider):
     prefix = start_urls[0]
 
     def parse(self, response):
-        nav_bar = response.css("div.SubNav__SubNavContent-sc-11106ua-3 cKmYsV")
-        sub_nav_bar = nav_bar.css("div.SubNav__SubNavContentBlock-sc-11106ua-2.bAolrB")
-        cast_link = sub_nav_bar.css("li.ipc-inline-list__item a")
+        nav_bar = response.css("div.SubNav__SubNavContentBlock-sc-11106ua-2.bAolrB")
+        cast_box = nav_bar.css("li.ipc-inline-list__item")
+        cast_link = cast_box.css("a:first-child").attrib["href"]
         link = ImdbSpider.prefix + cast_link
         yield Request(link, callback = self.parse_full_credits)
 
@@ -28,10 +28,10 @@ class ImdbSpider(scrapy.Spider):
 
     def parse_actor_page(self, response):
         film_box = response.css("div.filmo-category-section")
-        film_rows = film_box.css("div.filmo-row").css("::attr(id)")
+        film_rows = film_box.css("div.filmo-row")
         credits = []
         for row in film_rows:
-            film_name = row.css("b").css("a::text")
+            film_name = row.css("::attr(id)").css("b").css("a::text")
             credits.append(film_name)
         yield credits
 
